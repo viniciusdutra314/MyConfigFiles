@@ -1,0 +1,116 @@
+services:
+  homarr:
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./homarr/configs:/app/data/configs
+      - ./homarr/icons:/app/public/icons
+      - ./homarr/data:/data
+    ports:
+      - '7575:7575'
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - WEBUI_PORT=8080
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./qbittorrent/config:/config
+      - ./Downloads:/downloads
+    ports:
+      - '8080:8080'
+      - '62609:62609'
+
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./data/movies:/movies
+      - ./data/tv:/tv
+      - ./bazarr/config:/config
+    ports:
+      - '6767:6767'
+
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./prowlarr/config:/config
+    ports:
+      - '9696:9696'
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./radarr/config:/config
+      - ./Downloads:/downloads
+      - ./data/movies:/movies
+      - ./data/anime:/anime
+    ports:
+      - '7878:7878'
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./sonarr/config:/config
+      - ./data/tv:/tv
+      - ./Downloads:/downloads
+    ports:
+      - '8989:8989'
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./data/tv:/tv
+      - ./data/movies:/movies
+      - ./data/anime:/anime
+      - ./jellyfin/config:/config
+      - ./jellyfin/transcode:/transcode
+    ports:
+      - '8096:8096'
+      - '8920:8920'
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    depends_on:
+        - qbittorrent
+        - sonarr
+        - jellyfin
+        - radarr
+    environment:
+        - LOG_LEVEL=debug
+        - TZ=America/Sao_Paulo
+    ports:
+        - 5055:5055
+    volumes:
+        - ./jellyseerr/config:/app/config
+    restart: unless-stopped
+
