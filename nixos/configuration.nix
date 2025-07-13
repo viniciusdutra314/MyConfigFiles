@@ -10,6 +10,12 @@
     ./hardware-configuration.nix
   ];
 
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -17,8 +23,7 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nitro5-nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
 
   time.timeZone = "America/Sao_Paulo";
@@ -75,11 +80,13 @@
       epiphany # web browser
       evince # document viewer
       geary # email reader
-      gedit # text editor
       gnome-characters
+      gnome-contacts
       gnome-music
       gnome-photos
       gnome-terminal
+      gnome-weather
+      gnome-maps
       gnome-tour
       hitori # sudoku game
       iagno # go game
@@ -137,7 +144,6 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     #Development tools
-    alacritty
     cmake
     jetbrains.clion
     cloc
@@ -157,11 +163,19 @@
     uv
     vim
     wget
+    zsh
 
+    #typst
+    typst
+    typst
+    tinymist
+    
     #Studying
     anki
     brave
+    firefox
     libreoffice
+    gnome-pomodoro
     zotero
     obsidian
     stellarium
@@ -169,6 +183,12 @@
     #gaming
     steam
     prismlauncher
+
+    #gnome
+    gnomeExtensions.blur-my-shell
+    gnomeExtensions.just-perfection
+    gnomeExtensions.arc-menu
+
     #Media
     gimp3
     vlc
@@ -177,6 +197,7 @@
     obs-studio
     ffmpeg
     handbrake
+    qbittorrent
     #Miscellaneous
     btop
     spotify
@@ -188,31 +209,37 @@
     neofetch
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  #zsh
+  environment.shells = [ pkgs.zsh ];
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
 
-  # List services that you want to enable:
+    ohMyZsh = {
+      enable = true;
+      plugins = [
+        "git"
+        "gh"
+        "git-auto-fetch"
+        "git-commit"
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+      ];
+      theme = "agnoster";
+    };
+  };
+  programs.zoxide.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  # Enable VirtualBox
+  virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.enableExtensionPack = true;
+  virtualisation.virtualbox.guest.enable = true;
+  virtualisation.virtualbox.guest.dragAndDrop = true;
+  users.extraGroups.vboxusers.members = [ "vinicius" ];
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  services.openssh.enable = true;
+  system.stateVersion = "25.05";
 
 }
