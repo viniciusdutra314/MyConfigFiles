@@ -16,6 +16,13 @@
     options = "--delete-older-than 30d";
   };
 
+
+  services = {
+    envfs = {
+      enable = true;
+    };
+  };
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -59,6 +66,7 @@
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
   services.xserver.enable = true;
+
 
   #STEAM
   programs.steam = {
@@ -150,6 +158,8 @@
     cpu-x
     docker
     distrobox
+    fastfetch
+    home-manager
     git
     gh
     lshw
@@ -188,6 +198,7 @@
     gnomeExtensions.blur-my-shell
     gnomeExtensions.just-perfection
     gnomeExtensions.arc-menu
+    gnome-tweaks
 
     #Media
     gimp3
