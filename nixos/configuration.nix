@@ -2,6 +2,9 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+
+
+
 { config, pkgs, ... }:
 
 {
@@ -86,8 +89,8 @@
       atomix # puzzle game
       cheese # webcam tool
       epiphany # web browser
-      evince # document viewer
       geary # email reader
+      evince
       gnome-characters
       gnome-contacts
       gnome-music
@@ -141,13 +144,13 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "docker"
     ];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   virtualisation.docker.enable = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -183,7 +186,10 @@
     #Studying
     anki
     brave
+    calibre
     firefox
+    google-chrome
+    foliate
     libreoffice
     gnome-pomodoro
     zotero
@@ -219,6 +225,16 @@
     htop
     neofetch
   ];
+
+  #calibre
+  services.udisks2.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 80 443 8080 9090];
+    allowedUDPPorts = [8080 54982 48123 39001 44044 59678];
+  };
+
+
 
   #zsh
   environment.shells = [ pkgs.zsh ];
