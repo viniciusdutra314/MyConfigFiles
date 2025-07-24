@@ -5,13 +5,15 @@
 
 
 
-{ config, pkgs, ... }:
+{ config, pkgs,lib, ... }:
 
 {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
+
+  
 
   nix.gc = {
     automatic = true;
@@ -50,11 +52,15 @@
     LC_TIME = "pt_BR.UTF-8";
   };
 
-  #VIDEO CARD
+  services.power-profiles-daemon.enable = true;
   hardware.graphics = {
+  #VIDEO CARD
     enable = true;
   };
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver={
+    enable=true;
+    videoDrivers=["nvidia"];
+  };
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = false;
@@ -68,7 +74,14 @@
     };
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
-  services.xserver.enable = true;
+
+  specialisation = {
+    no-gpu.configuration = {
+      system.nixos.tags = [ "no-gpu" ];
+      services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
+    };
+  };
+
 
 
   #STEAM
@@ -177,6 +190,9 @@
     wget
     zsh
 
+    #tex
+    texliveFull
+    texstudio
     #typst
     typst
     typst
@@ -195,14 +211,16 @@
     obsidian
     stellarium
     telegram-desktop
+    gnome-power-manager
+    
     #gaming
     steam
     prismlauncher
 
-    #gnome
+    #gnome-extensions
+    gnomeExtensions.autohide-battery
     gnomeExtensions.arc-menu
     gnomeExtensions.battery-usage-wattmeter
-    gnomeExtensions.windowswitcher
     gnomeExtensions.weekly-commits
     gnomeExtensions.vitals
     gnome-tweaks
@@ -266,6 +284,15 @@
   virtualisation.virtualbox.guest.enable = true;
   virtualisation.virtualbox.guest.dragAndDrop = true;
   users.extraGroups.vboxusers.members = [ "vinicius" ];
+
+  #syncthing
+  services.syncthing = {
+    enable = true;
+    openDefaultPorts = true; 
+  };
+
+  #Waydroid
+  virtualisation.waydroid.enable = true;
 
   services.openssh.enable = true;
   system.stateVersion = "25.05";
