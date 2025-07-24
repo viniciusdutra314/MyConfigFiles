@@ -57,7 +57,7 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = true;
+    powerManagement.enable = false;
     powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = true;
@@ -155,11 +155,10 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     #Development tools
-    cmake
-    jetbrains.clion
     cloc
     cpu-x
     docker
+    lazydocker
     distrobox
     fastfetch
     home-manager
@@ -201,9 +200,11 @@
     prismlauncher
 
     #gnome
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.just-perfection
     gnomeExtensions.arc-menu
+    gnomeExtensions.battery-usage-wattmeter
+    gnomeExtensions.windowswitcher
+    gnomeExtensions.weekly-commits
+    gnomeExtensions.vitals
     gnome-tweaks
 
     #Media
