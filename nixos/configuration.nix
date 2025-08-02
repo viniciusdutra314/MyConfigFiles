@@ -161,13 +161,24 @@
     ];
   };
 
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  environment.sessionVariables = {
+  __GL_GSYNC_ALLOWED = "1";
+  __GL_VRR_ALLOWED = "1";
+  __GL_SYNC_TO_VBLANK = "1";
+};
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   virtualisation.docker.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+
   environment.systemPackages = with pkgs; [
     #Development tools
+    btrfs-progs
+    btrfs-assistant
     cloc
     cpu-x
     docker
@@ -187,14 +198,18 @@
     speedtest-cli
     uv
     vim
+    virt-viewer
     wget
     zsh
+    qemu
+    quickemu
+    weston
 
     #tex
     texliveFull
     texstudio
     #typst
-    typst
+
     typst
     tinymist
     
@@ -210,7 +225,6 @@
     zotero
     obsidian
     stellarium
-    telegram-desktop
     gnome-power-manager
     
     #gaming
@@ -233,6 +247,8 @@
     obs-studio
     ffmpeg
     handbrake
+    kdePackages.kdenlive
+    davinci-resolve
     qbittorrent
     #Miscellaneous
     btop
